@@ -1,0 +1,35 @@
+SERVICE AGREEMENT
+
+This Service Agreement is entered into on 1st March 2026 between:
+TechCorp India Pvt Ltd ("Client") and DataWorks Solutions ("Provider").
+
+Section 1 — Scope of Services
+The Provider shall deliver software development and AI consulting services.
+All deliverables must comply with Schedule A specifications.
+The Provider shall assign a dedicated project manager for this engagement.
+
+Section 2 — Payment Terms  
+The Client shall pay INR 5,00,000 per month within 30 days of invoice.
+Late payments attract 2% monthly interest on outstanding amounts.
+Invoices must be submitted on the first working day of each month.
+
+Section 3 — Confidentiality
+Both parties shall maintain strict confidentiality of proprietary information.
+This obligation survives termination for a period of three years.
+Disclosure to third parties requires prior written consent.
+
+Section 4 — Termination
+Either party may terminate with 60 days written notice.
+Immediate termination is permitted for material breach or insolvency.
+Upon termination, all company data must be returned within 14 days.
+
+Section 5 — Governing Law and Dispute Resolution
+This Agreement is governed by the laws of India.
+Disputes shall be resolved through arbitration under the Arbitration Act 1996.
+The seat of arbitration shall be Bangalore, Karnataka.
+
+Section 6 — Liability
+Neither party shall be liable for indirect or consequential damages.
+Total liability is capped at three months of fees paid under this Agreement.
+
+WHEREAS the parties have executed this Agreement as of the date written above.

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "inst_1",
+    "instruction": "Analyze the legal precedent set by Kesavananda Bharati v. State of Kerala.",
+    "context": "Kesavananda Bharati v. State of Kerala (1973): 13-Judge Constitution Bench established the Basic Structure Doctrine restricting Parliament's amending power under Article 368.",
+    "response": "The Kesavananda Bharati decision established that Parliament possesses wide constitutional amending power under Article 368, but cannot alter or destroy the Basic Structure of the Indian Constitution (including secularism, judicial review, and federalism)."
+  },
+  {
+    "id": "inst_2",
+    "instruction": "Explain the applicability of Part I of the Arbitration Act 1996 to foreign-seated arbitrations under BALCO (2012).",
+    "context": "Bharat Aluminium Co. v. Kaiser Aluminium (2012): Supreme Court Constitution Bench overruled Bhatia International prospectively regarding foreign-seated arbitrations.",
+    "response": "Under BALCO (2012), Part I of the Arbitration and Conciliation Act 1996 does not apply to foreign-seated arbitrations. Indian courts cannot grant interim relief under Section 9 for foreign-seated arbitrations unless explicitly agreed under post-2015 amendments."
+  },
+  {
+    "id": "inst_3",
+    "instruction": "What is the standard of liability established in M.C. Mehta v. Union of India for hazardous industries?",
+    "context": "M.C. Mehta (Oleum Gas Leak Case, 1986): Supreme Court formulated the doctrine of Absolute Liability for hazardous industrial units operating in populated regions.",
+    "response": "M.C. Mehta established the doctrine of Absolute Liability. Hazardous and inherently dangerous industrial enterprises owe an absolute, non-delegable duty to the community, and liability is absolute without Rylands v. Fletcher exceptions."
+  },
+  {
+    "id": "inst_4",
+    "instruction": "How does stamp duty deficiency impact Section 11 arbitrator appointments under N.N. Global (2023)?",
+    "context": "N.N. Global Mercantile v. Indo Unique Flame (2023): Constitution Bench held 3:2 that an unstamped contract cannot be acted upon until impounded.",
+    "response": "N.N. Global (2023) held that an unstamped or insufficiently stamped commercial contract containing an arbitration clause is unenforceable until impounded and stamped under the relevant Stamp Act, preventing Section 11 appointment until rectified."
+  }
+]

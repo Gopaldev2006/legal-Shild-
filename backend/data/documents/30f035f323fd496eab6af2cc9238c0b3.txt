@@ -1,0 +1,30 @@
+SERVICE AGREEMENT
+
+This Service Agreement is entered into on 1st April 2026 between:
+GlobalTech Solutions Pvt Ltd ("Client") and CodeWorks India ("Provider").
+
+Section 1 — Scope
+The Provider shall deliver software development, AI integration, and data analytics.
+All deliverables must meet the specifications outlined in Schedule A.
+
+Section 2 — Payment
+The Client shall pay INR 8,00,000 per month within 30 days of invoice.
+Late payments attract 1.5% monthly interest on outstanding amounts.
+Invoices shall be submitted on the first working day of each month.
+
+Section 3 — Confidentiality
+Both parties agree to keep all proprietary information strictly confidential.
+This obligation shall survive termination for a period of two years.
+Disclosure to third parties requires prior written consent.
+
+Section 4 — Termination
+Either party may terminate with 60 days written notice.
+Immediate termination is permitted in cases of material breach or insolvency.
+Upon termination all company assets must be returned within 14 days.
+
+Section 5 — Governing Law
+This Agreement is governed by the laws of India.
+Disputes shall be resolved through arbitration under the Arbitration and Conciliation Act 1996.
+The seat of arbitration shall be Bangalore, Karnataka.
+
+WHEREAS the parties have duly executed this Agreement on the date above.

@@ -1,0 +1,10 @@
+Section 1 — Parties
+This contract is between Alpha Corp and Beta Ltd, hereinafter referred to as the Parties.
+
+Section 2 — Obligations
+Both Parties agree to comply with all statutory requirements under the Indian Contract Act 1872.
+
+Section 3 — Termination
+Either party may terminate this agreement with thirty days written notice.
+
+WHEREAS the Parties have set their hands to this agreement on the date first written above.

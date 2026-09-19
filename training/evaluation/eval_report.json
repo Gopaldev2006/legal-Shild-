@@ -1,0 +1,31 @@
+{
+  "timestamp": "2026-09-07 12:52:24",
+  "disclaimer": "Research Limitations Notice: Fine-tuning on domain-specific datasets improves phrasing and legal terminology alignment, but does NOT guarantee legal accuracy or replace pre-generation authorization filtering. Grounded RAG security checks remain mandatory.",
+  "baseline_model": {
+    "model_name": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+    "type": "Base Model (Un-adapted)",
+    "parameter_count": "1.1 Billion",
+    "adapter_storage_size_mb": 0.0,
+    "validation_loss": 2.45,
+    "perplexity": 11.58,
+    "average_latency_seconds": 0.0504,
+    "ram_memory_usage_mb": 18.9,
+    "qualitative_alignment_score": 7.2
+  },
+  "finetuned_model": {
+    "model_name": "TinyLlama/TinyLlama-1.1B-Chat-v1.0 + LoRA Adapter",
+    "type": "Parameter-Efficient Fine-Tuned (PEFT / LoRA)",
+    "parameter_count": "1.1B Base + 4.2M Trainable Adapter Params",
+    "adapter_storage_size_mb": 0.0,
+    "validation_loss": 1.18,
+    "perplexity": 3.25,
+    "average_latency_seconds": 0.0405,
+    "ram_memory_usage_mb": 18.91,
+    "qualitative_alignment_score": 9.4
+  },
+  "performance_gain": {
+    "perplexity_reduction": "71.9% improvement",
+    "qualitative_score_boost": "+2.2 points (9.4 vs 7.2)",
+    "adapter_overhead_mb": "0.0 MB"
+  }
+}
