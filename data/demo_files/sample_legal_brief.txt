@@ -1,0 +1,18 @@
+DEMONSTRATION SAMPLE LEGAL BRIEF (SYNTHETIC DATA)
+Matter ID: CAS-2026-901
+Document Type: Case Brief
+Jurisdiction: High Court of Delhi
+
+1. STATEMENT OF FACTS:
+On January 15, 2026, Lessee entered into a commercial property lease agreement with Lessor for Premises No. 402, Business Park, New Delhi. Clause 14 of the Lease Agreement specifies that Lessee shall indemnify Lessor against any structural property damage exceeding 50,000 INR. On February 10, 2026, an electrical short-circuit caused localized damage to the HVAC system.
+
+2. CITED STATUTES & PROVISIONS:
+- Section 124 of the Indian Contract Act, 1872 (Contract of Indemnity defined)
+- Section 73 of the Indian Contract Act, 1872 (Compensation for loss or damage caused by breach of contract)
+- Section 302 of the Indian Penal Code, 1860 (Punishment for murder / culpable homicide)
+
+3. ARGUMENTS & CONTENTIONS:
+Lessee contends that the electrical short-circuit was an unexpected force majeure event resulting from municipal power grid fluctuation. Lessor contends that Clause 14 indemnity is strict and absolute, requiring immediate reimbursement of 75,000 INR for HVAC repair works.
+
+4. JUDICIAL PRECEDENT & VERDICT SUMMARY:
+The Court held that contractual indemnity clauses must be enforced according to their express language unless explicit force majeure exclusions are drafted. Lessee is held liable to pay 75,000 INR under Section 124 of the Indian Contract Act.
