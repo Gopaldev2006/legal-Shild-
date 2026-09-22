@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import PaginationControls from '../components/PaginationControls';
 import Toast from '../components/Toast';
+import AnalyticsTab from '../components/AnalyticsTab';
 import {
   Shield, Users, CheckCircle, XCircle, RefreshCw, FileText, Eye, Check, X,
-  AlertCircle, Cpu, Database, Lock, Search, Filter, ShieldAlert, Activity, Server, Key, Settings as SettingsIcon, Sliders, ClipboardList
+  AlertCircle, Cpu, Database, Lock, Search, Filter, ShieldAlert, Activity, Server, Key, Settings as SettingsIcon, Sliders, ClipboardList, BarChart2, Sparkles, Bot, CheckCircle2
 } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -67,6 +68,18 @@ export default function AdminDashboard() {
   const [auditEventFilter, setAuditEventFilter] = useState('');
   const [auditSuccessFilter, setAuditSuccessFilter] = useState('');
   const [loadingAuditLogs, setLoadingAuditLogs] = useState(false);
+
+  // ── Analytics State ────────────────────────────────────────────────────────
+  const [analyticsData,       setAnalyticsData]       = useState(null);
+  const [analyticsActivity,   setAnalyticsActivity]   = useState([]);
+  const [loadingAnalytics,    setLoadingAnalytics]    = useState(false);
+  const [analyticsError,      setAnalyticsError]      = useState(null);
+
+  // ── Timeseries State ───────────────────────────────────────────────────────
+  const [timeseriesData,      setTimeseriesData]      = useState([]);
+  const [timeseriesDays,      setTimeseriesDays]      = useState(7);
+  const [loadingTimeseries,   setLoadingTimeseries]   = useState(false);
+  const [timeseriesError,     setTimeseriesError]     = useState(null);
 
   // API Call Helpers
   const fetchSummary = async () => {
@@ -196,6 +209,64 @@ export default function AdminDashboard() {
     }
   };
 
+  const fetchTimeseries = async (days = timeseriesDays) => {
+    setLoadingTimeseries(true);
+    setTimeseriesError(null);
+    try {
+      const res = await fetch(`/api/v1/admin/analytics/timeseries?days=${days}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error('Unable to load time-series data.');
+      const data = await res.json();
+      setTimeseriesData(data.data || []);
+      setTimeseriesDays(days);
+    } catch (err) {
+      setTimeseriesError('Unable to load chart data. Please try again.');
+      console.error('Timeseries fetch error:', err.message);
+    } finally {
+      setLoadingTimeseries(false);
+    }
+  };
+
+  const handleDaysChange = (days) => {
+    setTimeseriesDays(days);
+    fetchTimeseries(days);
+  };
+
+  const fetchAnalytics = async () => {
+    setLoadingAnalytics(true);
+    setAnalyticsError(null);
+    try {
+      const [summaryRes, activityRes] = await Promise.all([
+        fetch('/api/v1/admin/analytics/summary', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }),
+        fetch('/api/v1/admin/analytics/recent-activity?limit=15', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }),
+      ]);
+
+      if (!summaryRes.ok || !activityRes.ok) {
+        throw new Error('Unable to load analytics.');
+      }
+
+      const [summaryData, activityData] = await Promise.all([
+        summaryRes.json(),
+        activityRes.json(),
+      ]);
+
+      setAnalyticsData(summaryData);
+      setAnalyticsActivity(activityData.items || []);
+    } catch (err) {
+      setAnalyticsError('Unable to load analytics. Please try again.');
+      console.error('Analytics fetch error:', err.message);
+    } finally {
+      setLoadingAnalytics(false);
+    }
+    // Also refresh timeseries with current period
+    fetchTimeseries(timeseriesDays);
+  };
+
   const fetchModelStatus = async () => {
     setLoadingModel(true);
     try {
@@ -223,6 +294,7 @@ export default function AdminDashboard() {
     else if (activeTab === 'documents') fetchDocuments(docPage);
     else if (activeTab === 'security') fetchSecurityEvents(secPage);
     else if (activeTab === 'audit') fetchAuditLogs(1);
+    else if (activeTab === 'analytics') { fetchAnalytics(); fetchTimeseries(timeseriesDays); }
     else if (activeTab === 'model') fetchModelStatus();
   }, [activeTab, token]);
 
@@ -316,6 +388,7 @@ export default function AdminDashboard() {
             if (activeTab === 'documents') fetchDocuments(1);
             if (activeTab === 'security') fetchSecurityEvents(1);
             if (activeTab === 'model') fetchModelStatus();
+            if (activeTab === 'analytics') fetchAnalytics();
             showToast('info', 'System metrics refreshed.');
           }}
           className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl flex items-center space-x-1.5 transition-all border border-slate-200 shadow-sm"
@@ -463,6 +536,18 @@ export default function AdminDashboard() {
         </button>
 
         <button
+          onClick={() => setActiveTab('analytics')}
+          className={`px-4 py-3 text-xs font-bold rounded-t-xl flex items-center space-x-2 transition-all whitespace-nowrap border-b-2 ${
+            activeTab === 'analytics'
+              ? 'bg-white text-teal-600 border-teal-600 shadow-sm'
+              : 'text-slate-500 hover:text-slate-900 border-transparent hover:bg-slate-100/50'
+          }`}
+        >
+          <BarChart2 className="w-4 h-4" />
+          <span>Analytics</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('model')}
           className={`px-4 py-3 text-xs font-bold rounded-t-xl flex items-center space-x-2 transition-all whitespace-nowrap border-b-2 ${
             activeTab === 'model'
@@ -536,6 +621,22 @@ export default function AdminDashboard() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Tab: Analytics */}
+      {activeTab === 'analytics' && (
+        <AnalyticsTab
+          analyticsData={analyticsData}
+          analyticsActivity={analyticsActivity}
+          loadingAnalytics={loadingAnalytics}
+          analyticsError={analyticsError}
+          onRefresh={fetchAnalytics}
+          timeseriesData={timeseriesData}
+          timeseriesDays={timeseriesDays}
+          loadingTimeseries={loadingTimeseries}
+          timeseriesError={timeseriesError}
+          onDaysChange={handleDaysChange}
+        />
       )}
 
       {/* Tab 2: User Management */}

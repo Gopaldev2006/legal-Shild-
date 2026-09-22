@@ -6,6 +6,7 @@ verification reviews, document audits, security event logs, and SLM model status
 All endpoints strictly require ADMIN role authorization.
 """
 
+import logging
 from datetime import datetime, timezone
 from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -24,6 +25,9 @@ from app.services.security.privacy.logger import privacy_audit_logger
 from app.services.system.benchmark_engine import benchmark_engine
 from app.services.audit.audit_service import write_audit_event
 from app.models.audit_log import AuditLog, AuditEventType
+from app.services.analytics.analytics_service import get_analytics_summary, get_recent_activity, get_timeseries
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -474,3 +478,104 @@ def get_audit_logs(
         "limit":       limit,
         "total_pages": (total + limit - 1) // limit if total > 0 else 1,
     }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Analytics Endpoints (Phase: Admin Analytics)
+# ─────────────────────────────────────────────────────────────────────────────
+
+@router.get("/analytics/summary", summary="Admin Analytics Summary")
+def get_analytics_summary_endpoint(
+    current_admin: User    = Depends(require_roles(UserRole.ADMIN)),
+    db:            Session = Depends(get_db),
+) -> Dict[str, Any]:
+    """
+    Returns aggregated analytics across users, documents, AI usage, and sessions.
+
+    Data sources:
+      users             → counts by role, new registrations over time
+      legal_documents   → counts by processing status and document type
+      chat_messages     → AI response counts; Gemini vs fallback breakdown
+                          (model_used field: "gemini" | "free-legal-engine")
+      rag_audit_logs    → RAG-specific query count (compliance table)
+      conversations     → counts by mode (general / document / rag)
+      user_sessions     → active session count
+
+    All calculations use SQL COUNT/GROUP BY — no full-table Python iteration.
+    Restricted strictly to ADMIN role.
+    """
+    try:
+        return get_analytics_summary(db)
+    except Exception as exc:
+        logger.error("Analytics summary error: %s", type(exc).__name__)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Analytics data could not be retrieved. Please try again.",
+        )
+
+
+@router.get("/analytics/recent-activity", summary="Admin Recent Activity Feed")
+def get_recent_activity_endpoint(
+    limit:         int  = Query(20, ge=1, le=100),
+    current_admin: User    = Depends(require_roles(UserRole.ADMIN)),
+    db:            Session = Depends(get_db),
+) -> Dict[str, Any]:
+    """
+    Returns the most recent security and activity events from the audit log.
+
+    Fields returned per event:
+      id, event_type, user_id, user_email, resource_type, resource_id,
+      success, created_at
+
+    Fields intentionally excluded:
+      passwords, tokens, API keys, legal document content, IP addresses
+
+    Restricted strictly to ADMIN role.
+    """
+    try:
+        items = get_recent_activity(db, limit=limit)
+        return {"items": items, "total": len(items)}
+    except Exception as exc:
+        logger.error("Recent activity error: %s", type(exc).__name__)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Recent activity could not be retrieved. Please try again.",
+        )
+
+
+@router.get("/analytics/timeseries", summary="Admin Time-Series Analytics")
+def get_analytics_timeseries(
+    days:          int  = Query(7, ge=1, le=30, description="Number of days: 1 (today), 7, or 30"),
+    current_admin: User    = Depends(require_roles(UserRole.ADMIN)),
+    db:            Session = Depends(get_db),
+) -> Dict[str, Any]:
+    """
+    Returns per-day aggregated analytics for the requested period.
+
+    Supported day values: 1 (today only), 7 (last 7 days), 30 (last 30 days).
+    Any value 1–30 is accepted.
+
+    Each element in `data`:
+      date      : "YYYY-MM-DD" (UTC)
+      users     : new registrations that day
+      documents : documents uploaded that day
+      ai_total  : total AI assistant messages that day
+      gemini    : Gemini-powered messages that day
+      fallback  : fallback-engine messages that day
+
+    Days with zero activity are included (no gaps).
+    Restricted strictly to ADMIN role.
+    """
+    try:
+        data = get_timeseries(db, days=days)
+        return {
+            "days":         days,
+            "data":         data,
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+        }
+    except Exception as exc:
+        logger.error("Timeseries analytics error: %s", type(exc).__name__)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Time-series analytics could not be retrieved. Please try again.",
+        )
