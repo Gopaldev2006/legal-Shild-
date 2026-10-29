@@ -1,5 +1,5 @@
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.orm import Session
 
 from app.models.user import User
@@ -32,6 +32,7 @@ router = APIRouter(prefix="/rag", tags=["Secure RAG & Two-Tier Assistant"])
 @limiter.limit(lambda: settings.RATE_LIMIT_PUBLIC_QUERY)
 def run_public_legal_query(
     request: Request,
+    response: Response,
     payload: PublicQueryRequest,
     user_api_key: Optional[str] = Depends(get_user_gemini_api_key_optional)
 ):
@@ -55,6 +56,7 @@ def run_public_legal_query(
 @limiter.limit(lambda: settings.RATE_LIMIT_RAG_QUERY)
 def run_secure_rag_query(
     request: Request,
+    response: Response,
     payload:      RAGAnswerRequest,
     current_user: User    = Depends(require_verified_legal_professional),
     db:           Session = Depends(get_db),
@@ -147,6 +149,7 @@ def extract_document_legal_arguments(
 @limiter.limit(lambda: settings.RATE_LIMIT_RAG_QUERY)
 def semantic_search(
     request: Request,
+    response: Response,
     payload:      SemanticSearchRequest,
     current_user: User    = Depends(require_verified_legal_professional),
     db:           Session = Depends(get_db),

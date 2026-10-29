@@ -12,7 +12,7 @@ import hashlib
 import logging
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, File, Form, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, UploadFile, File, Form, status
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
@@ -216,6 +216,7 @@ def _run_pipeline(doc: LegalDocument, current_user: User, db: Session) -> None:
 @limiter.limit(lambda: app_settings.RATE_LIMIT_DOC_UPLOAD)
 async def upload_legal_document(
     request:       Request,
+    response:      Response,
     file:          UploadFile         = File(...),
     document_type: DocumentType       = Form(DocumentType.GENERAL),
     jurisdiction:  Optional[str]      = Form(None),
@@ -234,7 +235,7 @@ async def upload_legal_document(
         ext = FileValidator.validate(
             filename=file.filename,
             content=content,
-            max_size_mb=settings.MAX_DOCUMENT_SIZE_MB,
+            max_size_mb=app_settings.MAX_DOCUMENT_SIZE_MB,
         )
     except FileValidationError as fve:
         raise HTTPException(status_code=fve.http_status, detail=str(fve))
@@ -441,6 +442,7 @@ def delete_document(
 @limiter.limit(lambda: app_settings.RATE_LIMIT_DOC_ANALYSIS)
 def analyze_legal_document(
     request:      Request,
+    response:     Response,
     document_id:  int,
     current_user: User    = Depends(require_roles(UserRole.LEGAL_PROFESSIONAL, UserRole.ADMIN)),
     db:           Session = Depends(get_db),

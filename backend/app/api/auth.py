@@ -19,7 +19,7 @@ Endpoints:
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db, get_current_user, require_roles
@@ -107,6 +107,7 @@ def _get_session_or_404(session_id: int, user_id: int, db: Session) -> UserSessi
 @limiter.limit(lambda: settings.RATE_LIMIT_REGISTER)
 def register_user(
     request: Request,
+    response: Response,
     user_in: UserRegister,
     db: Session = Depends(get_db),
 ):
@@ -146,6 +147,7 @@ def register_user(
 @limiter.limit(lambda: settings.RATE_LIMIT_LOGIN)
 def login_user(
     request: Request,
+    response: Response,
     user_in: UserLogin,
     db: Session = Depends(get_db),
 ):

@@ -27,7 +27,7 @@ import re
 from typing import List, Optional
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status, Query
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func, desc
 
@@ -381,6 +381,7 @@ def _conversation_list_item(conv: Conversation, db: Session) -> ConversationList
 @limiter.limit(lambda: app_settings.RATE_LIMIT_CHAT_CREATE)
 def create_conversation(
     request:      Request,
+    response:     Response,
     payload:      ConversationCreate,
     current_user: User    = Depends(get_current_user),
     db:           Session = Depends(get_db),
@@ -571,6 +572,7 @@ def delete_conversation(
 @limiter.limit(lambda: app_settings.RATE_LIMIT_CHAT_MESSAGE)
 def send_message(
     request:         Request,
+    response:        Response,
     conversation_id: int,
     payload:         SendMessageRequest,
     current_user:    User    = Depends(get_current_user),

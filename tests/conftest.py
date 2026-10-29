@@ -1,11 +1,9 @@
 import os
 
 # ── Must set DATABASE_URL BEFORE any app module is imported ──────────────────
-# app/db/session.py reads settings.DATABASE_URL at import time.
-# app/main.py calls Base.metadata.create_all(bind=engine) + init_db at import.
-# By pointing at a file-based path we share ONE engine across all sessions.
-# We use a named temp file so every test run starts fresh via setup_db fixture.
 os.environ["DATABASE_URL"] = "sqlite:///./test_temp.db"
+# Disable JTI revocation for old tests (they don't create UserSession rows)
+os.environ["REVOCATION_ENABLED"] = "false"
 
 import pytest
 from sqlalchemy import create_engine
@@ -19,7 +17,6 @@ from app.main import app             # triggers create_all + init_db
 from app.api.deps import get_db
 
 # ── Reuse the EXACT engine that app/db/session.py created ────────────────────
-# This guarantees the db fixture, override_get_db, and app all share one DB.
 engine = db_session.engine
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -52,3 +49,22 @@ def db():
         yield session
     finally:
         session.close()
+
+
+@pytest.fixture(autouse=True, scope="session")
+def disable_rate_limiting():
+    """
+    Disable SlowAPI rate limiting for the entire root test session.
+    Old tests share a single IP and would otherwise hit the 5/min login limit.
+    """
+    from app.core.limiter import limiter
+    from starlette.requests import Request
+
+    original = limiter._check_request_limit
+
+    def _noop(request: Request, endpoint, *args, **kwargs):
+        request.state.view_rate_limit = None
+
+    limiter._check_request_limit = _noop
+    yield
+    limiter._check_request_limit = original
